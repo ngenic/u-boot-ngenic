@@ -24,6 +24,8 @@
 #include <usb.h>
 #include <power/pmic.h>
 #include <power/pfuze3000_pmic.h>
+#include <pwm.h>
+#include <watchdog.h>
 #include "../../freescale/common/pfuze.h"
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -85,6 +87,13 @@ static iomux_v3_cfg_t const fec_pads[] = {
 	MX6_PAD_ENET2_RX_EN__ENET2_RX_EN	| MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET2_RX_ER__ENET2_RX_ER	| MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_UART4_TX_DATA__GPIO1_IO28	| MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
+/* Pads are take from the linux dts file */
+static iomux_v3_cfg_t const pwm_led_pads[] = {
+	MX6_PAD_NAND_ALE__PWM3_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* green */
+	MX6_PAD_ENET1_TX_CLK__PWM7_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* red */
+	MX6_PAD_ENET1_RX_ER__PWM8_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* blue */
 };
 
 static void setup_iomux_fec(void)
@@ -269,6 +278,49 @@ int board_ehci_hcd_init(int port)
 	return 0;
 }
 
+/* Will init to white (intention is to set brightness to 128/256 for all three rgb) */
+static int set_pwm_leds(void)
+{
+	int ret;
+
+	imx_iomux_v3_setup_multiple_pads(pwm_led_pads, ARRAY_SIZE(pwm_led_pads));
+	/* enable PWM 3, red LED */
+	ret = pwm_init(2, 0, 0);
+	if (ret)
+		return ret;
+	/* duty cycle 2500000ns, period: 5000000ns */
+	ret = pwm_config(2, 2500000, 5000000);
+	if (ret)
+		return ret;
+	ret = pwm_enable(2);
+	if (ret)
+		return ret;
+
+	/* enable PWM 7, green LED */
+	ret = pwm_init(6, 0, 0);
+	if (ret)
+		return ret;
+	/* duty cycle 2500000ns, period: 5000000ns */
+	ret = pwm_config(6, 2500000, 5000000);
+	if (ret)
+		return ret;
+	ret = pwm_enable(6);
+	if (ret)
+		return ret;
+
+	/* enable PWM 8, blue LED */
+	ret = pwm_init(7, 0, 0);
+	if (ret)
+		return ret;
+	/* duty cycle 2500000ns, period: 5000000ns */
+	ret = pwm_config(7, 2500000, 5000000);
+	if (ret)
+		return ret;
+	ret = pwm_enable(7);
+
+	return ret;
+}
+
 int board_init(void)
 {
 	/* Address of boot parameters */
@@ -278,8 +330,17 @@ int board_init(void)
 		setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
 	#endif
 
+	#ifdef CONFIG_IMX_WATCHDOG
+    	hw_watchdog_init();
+	#endif
+
+	#ifdef CONFIG_PWM_IMX
+		set_pwm_leds();
+	#endif
+
 	setup_fec();
 	setup_usb();
+
 
 	return 0;
 }

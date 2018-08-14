@@ -47,7 +47,7 @@
 	"dfu_alt_info=uboot raw 0x2 0x400 mmcpart 1;" \
 		"boot part 0 1;" \
 		"/zImage ext4 0 1;" \
-		"/imx6ul-pico-hobbit.dtb ext4 0 1;" \
+		"/imx6ul-pico-ngenic.dtb ext4 0 1;" \
 		"rootfs part 0 2\0" \
 
 #define CONFIG_SYS_MMC_IMG_LOAD_PART	1
@@ -69,7 +69,8 @@
 		"name=boot,size=16MiB;name=rootfs,size=0,uuid=${uuid_gpt_rootfs}\0" \
 	"setup_emmc=gpt write mmc 0 $partitions; reset;\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
-		"root=PARTUUID=${uuid} rootwait rw\0" \
+		"root=PARTUUID=${uuid} rootwait ro " \
+		"fbcon=scrollback:1024k consoleblank=0 caam\0" \
 	"loadimage=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
 	"loadfdt=load mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
 	"mmcboot=echo Booting from mmc ...; " \
@@ -150,5 +151,41 @@
 
 #define CONFIG_SYS_MMC_ENV_DEV		0
 #define CONFIG_SYS_MMC_ENV_PART		0
+
+/* 
+ * From https://www.denx.de/wiki/DULG/UBootEnvVariables
+ * After reset, U-Boot will wait this number of seconds before it executes the contents of the bootcmd variable. During this time a countdown is printed, which can be interrupted by pressing any key.
+ * Set this variable to 0 boot without delay. Be careful: depending on the contents of your bootcmd variable, this can prevent you from entering interactive commands again forever!
+ * Set this variable to -1 to disable autoboot. Set this variable to -2 to boot without delay and not check for abort.
+ */
+#define CONFIG_BOOTDELAY			-2
+
+/*
+ * From: http://git.denx.de/?p=u-boot.git;a=blob;f=doc/README.watchdog
+ * CONFIG_HW_WATCHDOG
+ *     This enables hw_watchdog_reset to be called during various loops,
+ *     including waiting for a character on a serial port. But it
+ *     does not also call hw_watchdog_init. Boards which want this
+ *     enabled must call this function in their board file. This split
+ *     is useful because some rom's enable the watchdog when downloading
+ *     new code, so it must be serviced, but the board would rather it
+ *     was off. And, it cannot always be turned off once on.
+ * 
+ * CONFIG_WATCHDOG_TIMEOUT_MSECS
+ *     Can be used to change the timeout for i.mx31/35/5x/6x.
+ *     If not given, will default to maximum timeout. This would
+ *     be 128000 msec for i.mx31/35/5x/6x.
+ * CONFIG_IMX_WATCHDOG
+ *     Available for i.mx31/35/5x/6x to service the watchdog. This is not
+ *     automatically set because some boards (vision2) still need to define
+ *     their own hw_watchdog_reset routine.
+ *     TODO: vision2 is removed now, so perhaps this can be changed.
+ */
+#define CONFIG_HW_WATCHDOG
+#define CONFIG_IMX_WATCHDOG
+#define CONFIG_WATCHDOG_TIMEOUT_MSECS	60 * 1000
+
+#define CONFIG_PWM_IMX
+#define CONFIG_IMX6_PWM_PER_CLK 66000000
 
 #endif /* __PICO_IMX6UL_CONFIG_H */
