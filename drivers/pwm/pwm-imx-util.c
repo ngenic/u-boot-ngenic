@@ -14,6 +14,12 @@
 #include <div64.h>
 #include <asm/arch/imx-regs.h>
 
+/* Hack to get the PWMs working on MX6UL */
+#define PWM5_BASE_ADDR (AIPS1_ARB_BASE_ADDR + 0xf0000)
+#define PWM6_BASE_ADDR (AIPS1_ARB_BASE_ADDR + 0xf4000)
+#define PWM7_BASE_ADDR (AIPS1_ARB_BASE_ADDR + 0xf8000)
+#define PWM8_BASE_ADDR (AIPS1_ARB_BASE_ADDR + 0xfc000)
+
 /* pwm_id from 0..7 */
 struct pwm_regs *pwm_id_to_reg(int pwm_id)
 {
@@ -27,8 +33,6 @@ struct pwm_regs *pwm_id_to_reg(int pwm_id)
 		return (struct pwm_regs *)PWM3_BASE_ADDR;
 	case 3:
 		return (struct pwm_regs *)PWM4_BASE_ADDR;
-#endif
-#ifdef CONFIG_MX6SX || CONFIG_MX6UL
 	case 4:
 		return (struct pwm_regs *)PWM5_BASE_ADDR;
 	case 5:

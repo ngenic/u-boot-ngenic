@@ -174,12 +174,6 @@
 #define PWM2_BASE_ADDR              (AIPS1_OFF_BASE_ADDR + 0x4000)
 #define PWM3_BASE_ADDR              (AIPS1_OFF_BASE_ADDR + 0x8000)
 #define PWM4_BASE_ADDR              (AIPS1_OFF_BASE_ADDR + 0xC000)
-#ifdef CONFIG_MX6UL
-#define PWM5_BASE_ADDR              (AIPS1_ARB_BASE_ADDR + 0xf0000)
-#define PWM6_BASE_ADDR              (AIPS1_ARB_BASE_ADDR + 0xf4000)
-#define PWM7_BASE_ADDR              (AIPS1_ARB_BASE_ADDR + 0xf8000)
-#define PWM8_BASE_ADDR              (AIPS1_ARB_BASE_ADDR + 0xfc000)
-#endif
 #define CAN1_BASE_ADDR              (AIPS1_OFF_BASE_ADDR + 0x10000)
 #define CAN2_BASE_ADDR              (AIPS1_OFF_BASE_ADDR + 0x14000)
 /* QOSC on i.MX6SLL */
