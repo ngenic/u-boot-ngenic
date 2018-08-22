@@ -288,8 +288,8 @@ static int set_pwm_leds(void)
 	ret = pwm_init(2, 0, 0);
 	if (ret)
 		return ret;
-	/* duty cycle 2500000ns, period: 5000000ns */
-	ret = pwm_config(2, 2500000, 5000000);
+	/* duty cycle 1250000ns, period: 5000000ns */
+	ret = pwm_config(2, 1250000, 5000000);
 	if (ret)
 		return ret;
 	ret = pwm_enable(2);
@@ -300,8 +300,8 @@ static int set_pwm_leds(void)
 	ret = pwm_init(6, 0, 0);
 	if (ret)
 		return ret;
-	/* duty cycle 2500000ns, period: 5000000ns */
-	ret = pwm_config(6, 2500000, 5000000);
+	/* duty cycle 1250000ns, period: 5000000ns */
+	ret = pwm_config(6, 1250000, 5000000);
 	if (ret)
 		return ret;
 	ret = pwm_enable(6);
@@ -312,8 +312,8 @@ static int set_pwm_leds(void)
 	ret = pwm_init(7, 0, 0);
 	if (ret)
 		return ret;
-	/* duty cycle 2500000ns, period: 5000000ns */
-	ret = pwm_config(7, 2500000, 5000000);
+	/* duty cycle 1250000ns, period: 5000000ns */
+	ret = pwm_config(7, 1250000, 5000000);
 	if (ret)
 		return ret;
 	ret = pwm_enable(7);
