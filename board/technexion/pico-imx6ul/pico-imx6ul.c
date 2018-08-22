@@ -278,7 +278,7 @@ int board_ehci_hcd_init(int port)
 	return 0;
 }
 
-/* Will init to white (intention is to set brightness to 128/256 for all three rgb) */
+/* Will init to white (intention is to set brightness to 64/256 for all three rgb) */
 static int set_pwm_leds(void)
 {
 	int ret;
