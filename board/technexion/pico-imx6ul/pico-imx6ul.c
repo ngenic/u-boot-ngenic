@@ -96,62 +96,6 @@ static iomux_v3_cfg_t const pwm_led_pads[] = {
 	MX6_PAD_ENET1_RX_ER__PWM8_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* blue */
 };
 
-static void setup_iomux_fec(void)
-{
-	imx_iomux_v3_setup_multiple_pads(fec_pads, ARRAY_SIZE(fec_pads));
-}
-
-int board_eth_init(bd_t *bis)
-{
-	setup_iomux_fec();
-
-	gpio_direction_output(RMII_PHY_RESET, 0);
-	/*
-	 * According to KSZ8081MNX-RNB manual:
-	 * For warm reset, the reset (RST#) pin should be asserted low for a
-	 * minimum of 500μs.  The strap-in pin values are read and updated
-	 * at the de-assertion of reset.
-	 */
-	udelay(500);
-
-	gpio_direction_output(RMII_PHY_RESET, 1);
-	/*
-	 * According to KSZ8081MNX-RNB manual:
-	 * After the de-assertion of reset, wait a minimum of 100μs before
-	 * starting programming on the MIIM (MDC/MDIO) interface.
-	 */
-	udelay(100);
-
-	return fecmxc_initialize(bis);
-}
-
-static int setup_fec(void)
-{
-	struct iomuxc *const iomuxc_regs = (struct iomuxc *)IOMUXC_BASE_ADDR;
-	int ret;
-
-	clrsetbits_le32(&iomuxc_regs->gpr[1], IOMUX_GPR1_FEC2_MASK,
-			IOMUX_GPR1_FEC2_CLOCK_MUX1_SEL_MASK);
-
-	ret = enable_fec_anatop_clock(1, ENET_50MHZ);
-	if (ret)
-		return ret;
-
-	enable_enet_clk(1);
-
-	return 0;
-}
-
-int board_phy_config(struct phy_device *phydev)
-{
-	phy_write(phydev, MDIO_DEVAD_NONE, 0x1f, 0x8190);
-
-	if (phydev->drv->config)
-		phydev->drv->config(phydev);
-
-	return 0;
-}
-
 int dram_init(void)
 {
 	gd->ram_size = imx_ddr_size();
@@ -187,11 +131,6 @@ static iomux_v3_cfg_t const usb_otg_pad[] = {
 static void setup_iomux_uart(void)
 {
 	imx_iomux_v3_setup_multiple_pads(uart6_pads, ARRAY_SIZE(uart6_pads));
-}
-
-static void setup_usb(void)
-{
-	imx_iomux_v3_setup_multiple_pads(usb_otg_pad, ARRAY_SIZE(usb_otg_pad));
 }
 
 static struct fsl_esdhc_cfg usdhc_cfg[1] = {
@@ -253,14 +192,6 @@ int power_init_board(void)
 	return 0;
 }
 #endif
-
-int board_usb_phy_mode(int port)
-{
-	if (port == 1)
-		return USB_INIT_HOST;
-	else
-		return USB_INIT_DEVICE;
-}
 
 int board_ehci_hcd_init(int port)
 {
@@ -337,10 +268,6 @@ int board_init(void)
 	#ifdef CONFIG_PWM_IMX
 		set_pwm_leds();
 	#endif
-
-	setup_fec();
-	setup_usb();
-
 
 	return 0;
 }
