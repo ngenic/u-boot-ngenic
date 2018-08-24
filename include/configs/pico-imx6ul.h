@@ -112,14 +112,6 @@
 #define CONFIG_SYS_MMC_ENV_DEV		0
 #define CONFIG_SYS_MMC_ENV_PART		0
 
-/* 
- * From https://www.denx.de/wiki/DULG/UBootEnvVariables
- * After reset, U-Boot will wait this number of seconds before it executes the contents of the bootcmd variable. During this time a countdown is printed, which can be interrupted by pressing any key.
- * Set this variable to 0 boot without delay. Be careful: depending on the contents of your bootcmd variable, this can prevent you from entering interactive commands again forever!
- * Set this variable to -1 to disable autoboot. Set this variable to -2 to boot without delay and not check for abort.
- */
-#define CONFIG_BOOTDELAY 5
-
 /*
  * From: http://git.denx.de/?p=u-boot.git;a=blob;f=doc/README.watchdog
  * CONFIG_HW_WATCHDOG
