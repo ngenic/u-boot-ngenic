@@ -26,6 +26,9 @@
 
 #define CONFIG_SYS_MMC_IMG_LOAD_PART	1
 
+#define CONFIG_SYS_MEMTEST_START	0x80000000
+#define CONFIG_SYS_MEMTEST_END		CONFIG_SYS_MEMTEST_START + SZ_128M
+
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"image=zImage\0" \
 	"console=ttymxc5\0" \
@@ -41,30 +44,39 @@
 		"uuid_disk=${uuid_gpt_disk};" \
 		"name=boot,size=16MiB;name=rootfs,size=0,uuid=${uuid_gpt_rootfs}\0" \
 	"setup_emmc=gpt write mmc 0 $partitions; reset;\0" \
-	"mmcargs=setenv bootargs console=${console},${baudrate} " \
+	"mmcargs_dev=setenv bootargs console=${console},${baudrate} " \
+		"root=PARTUUID=${uuid} rootwait ro " \
+		"fbcon=scrollback:1024k consoleblank=0 caam\0" \
+	"mmcargs=setenv bootargs console=none" \
 		"root=PARTUUID=${uuid} rootwait ro " \
 		"fbcon=scrollback:1024k consoleblank=0 caam\0" \
 	"loadimage=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
 	"loadfdt=load mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
 	"mmcboot=echo Booting from mmc ...; " \
 		"run finduuid; " \
-		"run mmcargs; " \
+		"if test ${ngenic_dev_mode} = true; then " \
+			"echo Dev mode is enabled.; " \
+		    "run mmcargs_dev; " \
+		"else " \
+		    "run mmcargs; " \
+		"fi; " \
 		"if run loadfdt; then " \
 			"bootz ${loadaddr} - ${fdt_addr}; " \
 		"else " \
 			"echo WARN: Cannot load the DT; " \
 		"fi;\0" \
+	"load_ngenic_env=" \
+	    "mmc read " CONFIG_SYS_MEMTEST_START " 0x800 0x10; " \ // Read from mmc to memory: offset block 2048 (0x800) and 16 (0x10) blocks. Using the memtest address on memory as temporary storage.
+		"env import -c " CONFIG_SYS_MEMTEST_START " 0x2000;\0" // Import env with size 16*blocksize(512) (0x2000).
 
 #define CONFIG_BOOTCOMMAND \
 	   "if mmc rescan; then " \
-		   "if run loadimage; then " \
-			   "run mmcboot; " \
-		   "else run netboot; " \
-		   "fi; " \
-	   "else run netboot; fi"
-
-#define CONFIG_SYS_MEMTEST_START	0x80000000
-#define CONFIG_SYS_MEMTEST_END		CONFIG_SYS_MEMTEST_START + SZ_128M
+	       "run load_ngenic_env; " \
+		   "run loadimage; " \
+		   "run mmcboot; " \
+	   "else " \
+	       "echo WARN: Cannot load find the mmc; " \
+	   "fi;" \
 
 #define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
 #define CONFIG_SYS_HZ			1000
