@@ -46,15 +46,14 @@
 	"setup_emmc=gpt write mmc 0 $partitions; reset;\0" \
 	"mmcargs=setenv bootargs console=none" \
 		"root=PARTUUID=${uuid} rootwait ro caam\0" \
-	"boot_part=${mmcdev}:${mmcpart}\0" \
-	"loadimage=load mmc ${boot_part} ${loadaddr} ${image}\0" \
-	"loadfdt=load mmc ${boot_part} ${fdt_addr} ${fdt_file}\0" \
+	"loadimage=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
+	"loadfdt=load mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
 	"bootscr=boot.scr\0" \
 	"script_addr=0x81000000\0" \
 	"loadbootscr=" \
-		"fatload mmc ${boot_part} ${script_addr} ${bootscr}; || " \
-		"ext2load mmc ${boot_part} ${script_addr} ${bootscr}; || " \
-		"ext2load mmc ${boot_part} ${script_addr} boot/${bootscr};\0" \
+		"fatload mmc ${mmcdev}:${mmcpart} ${script_addr} ${bootscr}; || " \
+		"ext2load mmc ${mmcdev}:${mmcpart} ${script_addr} ${bootscr}; || " \
+		"ext2load mmc ${mmcdev}:${mmcpart} ${script_addr} boot/${bootscr};\0" \
 	"mmcboot=echo Booting from mmc ...; " \
 		"run finduuid; " \
 		"run mmcargs; " \
