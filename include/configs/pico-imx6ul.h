@@ -46,7 +46,7 @@
 	"setup_emmc=gpt write mmc 0 $partitions; reset;\0" \
 	"mmcargs=setenv bootargs console=none" \
 		"root=PARTUUID=${uuid} rootwait ro caam\0" \
-	"boot_part=${mmcdev}:${mmcpart}" \
+	"boot_part=${mmcdev}:${mmcpart}\0" \
 	"loadimage=load mmc ${boot_part} ${loadaddr} ${image}\0" \
 	"loadfdt=load mmc ${boot_part} ${fdt_addr} ${fdt_file}\0" \
 	"bootscr=boot.scr\0" \
