@@ -51,9 +51,7 @@
 	"bootscr=boot.scr\0" \
 	"script_addr=0x81000000\0" \
 	"loadbootscr=" \
-		"fatload mmc ${mmcdev}:${mmcpart} ${script_addr} ${bootscr}; || " \
-		"ext2load mmc ${mmcdev}:${mmcpart} ${script_addr} ${bootscr}; || " \
-		"ext2load mmc ${mmcdev}:${mmcpart} ${script_addr} boot/${bootscr};\0" \
+		"fatload mmc ${mmcdev}:${mmcpart} ${script_addr} ${bootscr};\0" \
 	"mmcboot=echo Booting from mmc ...; " \
 		"run finduuid; " \
 		"run mmcargs; " \
