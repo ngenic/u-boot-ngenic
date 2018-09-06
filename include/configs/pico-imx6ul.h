@@ -75,7 +75,7 @@
 #define CONFIG_PREBOOT \
 		"if run loadbootscr; then " \
 			"echo Found boot.scr. Executing script...; " \
-			"source ${scriptaddr}; " \
+			"source ${script_addr}; " \
 		"fi;"
 
 #define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
