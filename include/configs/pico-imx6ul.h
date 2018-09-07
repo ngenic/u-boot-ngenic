@@ -44,7 +44,7 @@
 		"uuid_disk=${uuid_gpt_disk};" \
 		"name=boot,size=16MiB;name=rootfs,size=0,uuid=${uuid_gpt_rootfs}\0" \
 	"setup_emmc=gpt write mmc 0 $partitions; reset;\0" \
-	"mmcargs=setenv bootargs console=none" \
+	"mmcargs=setenv bootargs console=none " \
 		"root=PARTUUID=${uuid} rootwait ro caam\0" \
 	"loadimage=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
 	"loadfdt=load mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
