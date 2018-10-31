@@ -14,6 +14,14 @@
 #include "mx6_common.h"
 #include <asm/mach-imx/gpio.h>
 
+/* Network support */
+
+#define CONFIG_FEC_MXC
+#define CONFIG_MII
+#define IMX_FEC_BASE			ENET2_BASE_ADDR
+#define CONFIG_FEC_MXC_PHYADDR		0x1
+#define CONFIG_FEC_XCV_TYPE		RMII
+
 /* Size of malloc() pool */
 #define CONFIG_SYS_MALLOC_LEN		(35 * SZ_1M) /* Increase due to DFU */
 
@@ -24,6 +32,14 @@
 #define CONFIG_FSL_USDHC
 #define CONFIG_SYS_FSL_ESDHC_ADDR	USDHC1_BASE_ADDR
 #define CONFIG_SUPPORT_EMMC_BOOT
+
+/* USB Configs */
+#define CONFIG_EHCI_HCD_INIT_AFTER_RESET
+#define CONFIG_MXC_USB_PORTSC		(PORT_PTS_UTMI | PORT_PTS_PTW)
+#define CONFIG_MXC_USB_FLAGS		0
+#define CONFIG_USB_MAX_CONTROLLER_COUNT	2
+
+#define CONFIG_USBD_HS
 
 #define CONFIG_SYS_MMC_IMG_LOAD_PART	1
 
