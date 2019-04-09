@@ -3,3 +3,32 @@ CONFIG_ARM=y
 CONFIG_ARCH_MX6=y
 CONFIG_TARGET_MYD_Y6ULL_14X14=y
 CONFIG_CMD_GPIO=y
+
+/* Added by Ngenic */
+CONFIG_SUPPORT_RAW_INITRD=y
+CONFIG_DEFAULT_FDT_FILE="myb-y6ull-14x14-ngenic.dtb"
+CONFIG_BOARD_EARLY_INIT_F=y
+CONFIG_HUSH_PARSER=y
+CONFIG_CMD_BOOTZ=y
+CONFIG_CMD_MEMTEST=y
+# CONFIG_CMD_FLASH is not set
+CONFIG_CMD_GPIO=y
+CONFIG_CMD_GPT=y
+CONFIG_CMD_MMC=y
+CONFIG_CMD_PART=y
+CONFIG_CMD_CACHE=y
+CONFIG_CMD_EXT2=y
+CONFIG_CMD_FAT=y
+CONFIG_CMD_FS_GENERIC=y
+CONFIG_FSL_ESDHC=y
+CONFIG_PHYLIB=y
+CONFIG_USB=y
+CONFIG_CI_UDC=y
+CONFIG_OF_LIBFDT=y
+#
+# From https://www.denx.de/wiki/DULG/UBootEnvVariables
+# After reset, U-Boot will wait this number of seconds before it executes the contents of the bootcmd variable. During this time a countdown is printed, which can be interrupted by pressing any key.
+# Set this variable to 0 boot without delay. Be careful: depending on the contents of your bootcmd variable, this can prevent you from entering interactive commands again forever!
+# Set this variable to -1 to disable autoboot. Set this variable to -2 to boot without delay and not check for abort.
+#
+CONFIG_BOOTDELAY 5
