@@ -52,9 +52,6 @@
 
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 
-#define CONFIG_DISPLAY_CPUINFO
-#define CONFIG_DISPLAY_BOARDINFO
-
 /* Size of malloc() pool */
 #define CONFIG_SYS_MALLOC_LEN		(16 * SZ_1M)
 
@@ -207,13 +204,5 @@
 #define CONFIG_IMX_THERMAL
 
 #define CONFIG_IOMUX_LPSR
-
-/*
- * From https://www.denx.de/wiki/DULG/UBootEnvVariables
- * After reset, U-Boot will wait this number of seconds before it executes the contents of the bootcmd variable. During this time a countdown is printed, which can be interrupted by pressing any key.
- * Set this variable to 0 boot without delay. Be careful: depending on the contents of your bootcmd variable, this can prevent you from entering interactive commands again forever!
- * Set this variable to -1 to disable autoboot. Set this variable to -2 to boot without delay and not check for abort.
- */
-#define CONFIG_BOOTDELAY 5
 
 #endif
