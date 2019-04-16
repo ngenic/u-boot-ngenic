@@ -499,12 +499,12 @@ void board_late_mmc_env_init(void)
 	if (!check_mmc_autodetect())
 		return;
 
-	setenv_ulong("mmcdev", dev_no);
+	env_set_ulong("mmcdev", dev_no);
 
 	/* Set mmcblk env */
 	sprintf(mmcblk, "/dev/mmcblk%dp2 rootwait rw",
 		mmc_map_to_kernel_blk(dev_no));
-	setenv("mmcroot", mmcblk);
+	env_set("mmcroot", mmcblk);
 
 	sprintf(cmd, "mmc dev %d", dev_no);
 	run_command(cmd, 0);
@@ -926,12 +926,12 @@ int board_late_init(void)
 #endif
 
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-	setenv("board_name", "MYD-Y6ULY2");
+	env_set("board_name", "MYD-Y6ULY2");
 
 	if (is_mx6ull_9x9_evk())
-		setenv("board_rev", "9X9");
+		env_set("board_rev", "9X9");
 	else
-		setenv("board_rev", "14X14");
+		env_set("board_rev", "14X14");
 #endif
 
 #ifdef CONFIG_ENV_IS_IN_MMC
@@ -961,26 +961,26 @@ void board_fastboot_setup(void)
 	case SD1_BOOT:
 	case MMC1_BOOT:
 		if (!getenv("fastboot_dev"))
-			setenv("fastboot_dev", "mmc0");
+			env_set("fastboot_dev", "mmc0");
 		if (!getenv("bootcmd"))
-			setenv("bootcmd", "boota mmc0");
+			env_set("bootcmd", "boota mmc0");
 		break;
 	case SD2_BOOT:
 	case MMC2_BOOT:
 		if (!getenv("fastboot_dev"))
-			setenv("fastboot_dev", "mmc1");
+			env_set("fastboot_dev", "mmc1");
 		if (!getenv("bootcmd"))
-			setenv("bootcmd", "boota mmc1");
+			env_set("bootcmd", "boota mmc1");
 		break;
 #endif /*CONFIG_FASTBOOT_STORAGE_MMC*/
 #if defined(CONFIG_FASTBOOT_STORAGE_NAND)
 	case NAND_BOOT:
 		if (!getenv("fastboot_dev"))
-			setenv("fastboot_dev", "nand");
+			env_set("fastboot_dev", "nand");
 		if (!getenv("fbparts"))
-			setenv("fbparts", ANDROID_FASTBOOT_NAND_PARTS);
+			env_set("fbparts", ANDROID_FASTBOOT_NAND_PARTS);
 		if (!getenv("bootcmd"))
-			setenv("bootcmd",
+			env_set("bootcmd",
 				"nand read ${loadaddr} ${boot_nand_offset} "
 				"${boot_nand_size};boota ${loadaddr}");
 		break;
@@ -1011,18 +1011,18 @@ void board_recovery_setup(void)
 	case SD1_BOOT:
 	case MMC1_BOOT:
 		if (!getenv("bootcmd_android_recovery"))
-			setenv("bootcmd_android_recovery", "boota mmc0 recovery");
+			env_set("bootcmd_android_recovery", "boota mmc0 recovery");
 		break;
 	case SD2_BOOT:
 	case MMC2_BOOT:
 		if (!getenv("bootcmd_android_recovery"))
-			setenv("bootcmd_android_recovery", "boota mmc1 recovery");
+			env_set("bootcmd_android_recovery", "boota mmc1 recovery");
 		break;
 #endif /*CONFIG_FASTBOOT_STORAGE_MMC*/
 #if defined(CONFIG_FASTBOOT_STORAGE_NAND)
 	case NAND_BOOT:
 		if (!getenv("bootcmd_android_recovery"))
-			setenv("bootcmd_android_recovery",
+			env_set("bootcmd_android_recovery",
 				"nand read ${loadaddr} ${recovery_nand_offset} "
 				"${recovery_nand_size};boota ${loadaddr}");
 		break;
@@ -1035,7 +1035,7 @@ void board_recovery_setup(void)
 	}
 
 	printf("setup env for recovery..\n");
-	setenv("bootcmd", "run bootcmd_android_recovery");
+	env_set("bootcmd", "run bootcmd_android_recovery");
 }
 #endif /*CONFIG_ANDROID_RECOVERY*/
 
