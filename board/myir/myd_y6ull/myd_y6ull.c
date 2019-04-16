@@ -27,7 +27,7 @@
 #include <power/pfuze3000_pmic.h>
 #include "../../freescale/common/pfuze.h"
 #include <usb.h>
-#include <usb/ehci-fsl.h>
+#include <usb/ehci-ci.h>
 #include <asm/mach-imx/video.h>
 
 #ifdef CONFIG_FSL_FASTBOOT
