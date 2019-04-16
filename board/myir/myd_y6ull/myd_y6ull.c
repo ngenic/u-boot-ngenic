@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2019 Ngenic AB
  * Copyright (C) 2016 Freescale Semiconductor, Inc.
  *
  * SPDX-License-Identifier:	GPL-2.0+
@@ -11,9 +12,9 @@
 #include <asm/arch/mx6-pins.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/gpio.h>
-#include <asm/imx-common/iomux-v3.h>
-#include <asm/imx-common/boot_mode.h>
-#include <asm/imx-common/mxc_i2c.h>
+#include <asm/mach-imx/iomux-v3.h>
+#include <asm/mach-imx/boot_mode.h>
+#include <asm/mach-imx/mxc_i2c.h>
 #include <asm/io.h>
 #include <common.h>
 #include <fsl_esdhc.h>
@@ -28,7 +29,7 @@
 #include "../../freescale/common/pfuze.h"
 #include <usb.h>
 #include <usb/ehci-fsl.h>
-#include <asm/imx-common/video.h>
+#include <asm/mach-imx/video.h>
 
 #ifdef CONFIG_FSL_FASTBOOT
 #include <fsl_fastboot.h>
