@@ -938,7 +938,15 @@ int board_late_init(void)
 	board_late_mmc_env_init();
 #endif
 
+        /* 2019-04-16: The line below causes compilation to fail with
+         * an "undefined reference to `set_wdog_reset`". It seems that
+         * you can call this function for the MX7 and MX8 archs, but
+         * not for IMX6. I have no idea if commenting this one out
+         * breaks things, but it is worth a try.
+         * - Erik @ Ngenic
+
 	set_wdog_reset((struct wdog_regs *)WDOG1_BASE_ADDR);
+        */
 
 	return 0;
 }
