@@ -9,4 +9,8 @@ config SYS_VENDOR
 config SYS_CONFIG_NAME
 	default "myd_y6ull"
 
+config SYS_BOOT_EMMC
+	bool
+	default y
+
 endif
