@@ -121,6 +121,7 @@
 			"echo WARN: Cannot load the DT; " \
 		"fi;\0" \
 
+#ifndef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND \
 	   "if mmc rescan; then " \
 		    "if run loadimage; then " \
@@ -130,13 +131,14 @@
            	"fi; " \
 	   "else " \
 	       "echo WARN: mmc rescan failed; " \
-	   "fi;" \
+	   "fi;"
 
 #define CONFIG_PREBOOT \
 		"if run loadbootscr; then " \
 			"echo Found boot.scr. Executing script...; " \
 			"source ${script_addr}; " \
 		"fi;"
+#endif
 
 /* Miscellaneous configurable options */
 #define CONFIG_SYS_MEMTEST_START	0x80000000
