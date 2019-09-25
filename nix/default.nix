@@ -1,8 +1,8 @@
 let
   pkgs = import <nixpkgs> {
     crossSystem = {
-      config = "arm-linux-gnueabihf";
-      platform = (import <nixpkgs/lib>).systems.platforms.armv7l-hf-multiplatform;
+      config = "armv7l-unknown-linux-gnueabihf";
+      platform = pkgs.lib.systems.platforms.armv7l-hf-multiplatform;
     };
   };
   inherit (pkgs) lib buildUBoot;
@@ -10,7 +10,7 @@ let
 in rec {
   ubootBootbombMYDY6ULL = buildUBoot rec {
     name = "u-boot-bootbomb-myd-y6ull";
-    src = ./.;
+    src = ../.;
 
     defconfig = "myd_y6ull_14x14_emmc_bootbomb_defconfig";
 
@@ -27,7 +27,7 @@ in rec {
 
   ubootBootbombMYDY6ULL2 = buildUBoot rec {
     name = "u-boot-bootbomb-myd-y6ull";
-    src = ./.;
+    src = ../.;
 
     defconfig = "myd_y6ull_14x14_emmc_defconfig";
 
@@ -50,7 +50,7 @@ in rec {
 
   ubootPicoIMX6UL = buildUBoot rec {
     name = "u-boot-pico-imx6ul";
-    src = ./.;
+    src = ../.;
 
     defconfig = "pico-imx6ul_defconfig";
 
