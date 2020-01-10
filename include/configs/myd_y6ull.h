@@ -71,23 +71,6 @@
 
 #endif /* end CONFIG_FSL_USDHC */
 
-/* I2C configs */
-#ifdef CONFIG_CMD_I2C
-#define CONFIG_SYS_I2C
-#define CONFIG_SYS_I2C_MXC
-#define CONFIG_SYS_I2C_MXC_I2C1		/* enable I2C bus 1 */
-#define CONFIG_SYS_I2C_MXC_I2C2		/* enable I2C bus 2 */
-#define CONFIG_SYS_I2C_SPEED		100000
-
-/* PMIC only for 9X9 EVK */
-#define CONFIG_POWER
-#define CONFIG_POWER_I2C
-#define CONFIG_POWER_PFUZE3000
-#define CONFIG_POWER_PFUZE3000_I2C_ADDR  0x08
-#endif
-
-#define CONFIG_SYS_MMC_IMG_LOAD_PART	1
-
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"image=zImage\0" \
 	"console=ttymxc0\0" \
@@ -98,7 +81,7 @@
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
 	"mmcautodetect=yes\0" \
-	"finduuid=part uuid mmc 0:2 uuid\0" \
+	"finduuid=part uuid mmc ${mmcdev}:${mmcpart} uuid\0" \
 	"partitions=" \
 		"uuid_disk=${uuid_gpt_disk};" \
 		"name=boot,size=16MiB;name=rootfs,size=0,uuid=${uuid_gpt_rootfs}\0" \
@@ -131,7 +114,7 @@
            	"fi; " \
 	   "else " \
 	       "echo WARN: mmc rescan failed; " \
-	   "fi;"
+	   "fi;" \
 
 #define CONFIG_PREBOOT \
 		"if run loadbootscr; then " \
@@ -142,7 +125,7 @@
 
 /* Miscellaneous configurable options */
 #define CONFIG_SYS_MEMTEST_START	0x80000000
-#define CONFIG_SYS_MEMTEST_END		(CONFIG_SYS_MEMTEST_START + 0x8000000)
+#define CONFIG_SYS_MEMTEST_END		CONFIG_SYS_MEMTEST_START + SZ_128M
 
 #define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
 #define CONFIG_SYS_HZ			1000
@@ -163,10 +146,25 @@
 /* FLASH and environment organization */
 #define CONFIG_SYS_MMC_ENV_DEV		1
 #define CONFIG_SYS_MMC_ENV_PART		0
+#define CONFIG_SYS_MMC_IMG_LOAD_PART	2
+
+/* I2C configs */
+#ifdef CONFIG_CMD_I2C
+#define CONFIG_SYS_I2C
+#define CONFIG_SYS_I2C_MXC
+#define CONFIG_SYS_I2C_MXC_I2C1		/* enable I2C bus 1 */
+#define CONFIG_SYS_I2C_MXC_I2C2		/* enable I2C bus 2 */
+#define CONFIG_SYS_I2C_SPEED		100000
+
+/* PMIC only for 9X9 EVK */
+#define CONFIG_POWER
+#define CONFIG_POWER_I2C
+#define CONFIG_POWER_PFUZE3000
+#define CONFIG_POWER_PFUZE3000_I2C_ADDR  0x08
+#endif
 
 #define CONFIG_ENV_SIZE			SZ_8K
 #define CONFIG_ENV_OFFSET		(8 * SZ_64K)
-
 
 /* USB Configs */
 #define CONFIG_EHCI_HCD_INIT_AFTER_RESET
@@ -174,6 +172,7 @@
 #define CONFIG_MXC_USB_FLAGS   0
 #define CONFIG_USB_MAX_CONTROLLER_COUNT 2
 
+/* Network support */
 #ifdef CONFIG_CMD_NET
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_DHCP
