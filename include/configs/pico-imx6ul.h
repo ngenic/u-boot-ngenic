@@ -63,7 +63,6 @@
 		"fi;\0" \
 
 #define CONFIG_BOOTCOMMAND \
-	   "mmc ${mmcdev}" \
 	   "if mmc rescan; then " \
 		    "if run loadimage; then " \
                	"run mmcboot; " \
