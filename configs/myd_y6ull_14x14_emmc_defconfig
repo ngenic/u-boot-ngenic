@@ -24,6 +24,8 @@ CONFIG_FSL_ESDHC=y
 CONFIG_USB=y
 CONFIG_CI_UDC=y
 CONFIG_OF_LIBFDT=y
+CONFIG_SUPPORT_EMMC_BOOT=y
+
 #
 # From https://www.denx.de/wiki/DULG/UBootEnvVariables
 # After reset, U-Boot will wait this number of seconds before it executes the contents of the bootcmd variable. During this time a countdown is printed, which can be interrupted by pressing any key.

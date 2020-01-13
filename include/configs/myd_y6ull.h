@@ -61,6 +61,7 @@
 /* MMC Configs */
 #ifdef CONFIG_FSL_USDHC
 #define CONFIG_SYS_FSL_ESDHC_ADDR	USDHC2_BASE_ADDR
+#define CONFIG_SUPPORT_EMMC_BOOT
 
 /* NAND pin conflicts with usdhc2 */
 #if defined(CONFIG_SYS_BOOT_EMMC)
@@ -88,7 +89,7 @@
 	"setup_emmc=gpt write mmc 0 $partitions; reset;\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
 		"root=PARTUUID=${uuid} rootwait ro " \
-                "fbcon=scrollback:1024k consoleblank=0 caam\0" \
+                "fbcon=scrollback:1024k consoleblank=0\0" \
 	"loadimage=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
 	"loadfdt=load mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
 	"bootscr=boot.scr\0" \
@@ -106,6 +107,9 @@
 
 #ifndef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND \
+	   "mmc ${mmcdev}" \
+	   "echo Set user partition on EMMC as bootable. " \
+	   "mmc partconf ${mmcdev} 1 7 0" \
 	   "if mmc rescan; then " \
 		    "if run loadimage; then " \
                	"run mmcboot; " \
@@ -146,7 +150,7 @@
 /* FLASH and environment organization */
 #define CONFIG_SYS_MMC_ENV_DEV		1
 #define CONFIG_SYS_MMC_ENV_PART		0
-#define CONFIG_SYS_MMC_IMG_LOAD_PART	2
+#define CONFIG_SYS_MMC_IMG_LOAD_PART	1
 
 /* I2C configs */
 #ifdef CONFIG_CMD_I2C
@@ -174,8 +178,6 @@
 
 /* Network support */
 #ifdef CONFIG_CMD_NET
-#define CONFIG_CMD_PING
-#define CONFIG_CMD_DHCP
 #define CONFIG_CMD_MII
 #define CONFIG_FEC_MXC
 #define CONFIG_MII
