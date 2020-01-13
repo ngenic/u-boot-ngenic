@@ -118,10 +118,10 @@
 		"fi;" \
 
 #define CONFIG_PREBOOT \
-		"echo Set the MMC device. " \
-		"mmc ${mmcdev} " \
-		"echo Set user partition on EMMC as bootable. " \
-		"mmc partconf ${mmcdev} 1 7 0 " \
+		"echo Set the MMC device.; " \
+		"mmc dev ${mmcdev}; " \
+		"echo Set user partition on EMMC as bootable.; " \
+		"mmc partconf ${mmcdev} 1 7 0; " \
 		"if run loadbootscr; then " \
 			"echo Found boot.scr. Executing script...; " \
 			"source ${script_addr}; " \
