@@ -80,9 +80,10 @@
 	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
 	"fdt_addr=0x83000000\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
-	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
+	"mmcbootpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
+	"mmcrootpart=" __stringify(CONFIG_SYS_MMC_ROOT_PART) "\0" \
 	"mmcautodetect=yes\0" \
-	"finduuid=part uuid mmc ${mmcdev}:${mmcpart} uuid\0" \
+	"findrootuuid=part uuid mmc ${mmcdev}:${mmcrootpart} uuid\0" \
 	"partitions=" \
 		"uuid_disk=${uuid_gpt_disk};" \
 		"name=boot,size=16MiB;name=rootfs,size=0,uuid=${uuid_gpt_rootfs}\0" \
@@ -90,14 +91,14 @@
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
 		"root=PARTUUID=${uuid} rootwait ro " \
                 "fbcon=scrollback:1024k consoleblank=0\0" \
-	"loadimage=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
-	"loadfdt=load mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
+	"loadimage=load mmc ${mmcdev}:${mmcbootpart} ${loadaddr} ${image}\0" \
+	"loadfdt=load mmc ${mmcdev}:${mmcbootpart} ${fdt_addr} ${fdt_file}\0" \
 	"bootscr=boot.scr\0" \
 	"script_addr=0x81000000\0" \
 	"loadbootscr=" \
-		"fatload mmc ${mmcdev}:${mmcpart} ${script_addr} ${bootscr};\0" \
+		"fatload mmc ${mmcdev}:${mmcbootpart} ${script_addr} ${bootscr};\0" \
 	"mmcboot=echo Booting from mmc ...; " \
-		"run finduuid; " \
+		"run findrootuuid; " \
 		"run mmcargs; " \
 		"if run loadfdt; then " \
 			"bootz ${loadaddr} - ${fdt_addr}; " \
@@ -152,6 +153,7 @@
 #define CONFIG_SYS_MMC_ENV_DEV		1
 #define CONFIG_SYS_MMC_ENV_PART		0
 #define CONFIG_SYS_MMC_IMG_LOAD_PART	1
+#define CONFIG_SYS_MMC_ROOT_PART	2
 
 /* I2C configs */
 #ifdef CONFIG_CMD_I2C
