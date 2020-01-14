@@ -75,8 +75,6 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"image=zImage\0" \
 	"console=ttymxc0\0" \
-	"fdt_high=0xffffffff\0" \
-	"initrd_high=0xffffffff\0" \
 	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
 	"fdt_addr=0x83000000\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
@@ -84,10 +82,6 @@
 	"mmcrootpart=" __stringify(MMC_ROOT_PART) "\0" \
 	"mmcautodetect=yes\0" \
 	"findrootuuid=part uuid mmc ${mmcdev}:${mmcrootpart} uuid\0" \
-	"partitions=" \
-		"uuid_disk=${uuid_gpt_disk};" \
-		"name=boot,size=16MiB;name=rootfs,size=0,uuid=${uuid_gpt_rootfs}\0" \
-	"setup_emmc=gpt write mmc 0 $partitions; reset;\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
 		"root=PARTUUID=${uuid} rootwait ro " \
                 "fbcon=scrollback:1024k consoleblank=0\0" \
