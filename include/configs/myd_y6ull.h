@@ -81,7 +81,7 @@
 	"fdt_addr=0x83000000\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
 	"mmcbootpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
-	"mmcrootpart=" __stringify(CONFIG_SYS_MMC_ROOT_PART) "\0" \
+	"mmcrootpart=" __stringify(MMC_ROOT_PART) "\0" \
 	"mmcautodetect=yes\0" \
 	"findrootuuid=part uuid mmc ${mmcdev}:${mmcrootpart} uuid\0" \
 	"partitions=" \
@@ -153,7 +153,7 @@
 #define CONFIG_SYS_MMC_ENV_DEV		1
 #define CONFIG_SYS_MMC_ENV_PART		0
 #define CONFIG_SYS_MMC_IMG_LOAD_PART	1
-#define CONFIG_SYS_MMC_ROOT_PART	2
+#define MMC_ROOT_PART	2
 
 /* I2C configs */
 #ifdef CONFIG_CMD_I2C
