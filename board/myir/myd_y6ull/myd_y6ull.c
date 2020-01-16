@@ -332,30 +332,6 @@ static iomux_v3_cfg_t const uart1_pads[] = {
 	MX6_PAD_UART1_RX_DATA__UART1_DCE_RX | MUX_PAD_CTRL(UART_PAD_CTRL),
 };
 
-static iomux_v3_cfg_t const usdhc1_pads[] = {
-	MX6_PAD_SD1_CLK__USDHC1_CLK | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_SD1_CMD__USDHC1_CMD | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_SD1_DATA0__USDHC1_DATA0 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_SD1_DATA1__USDHC1_DATA1 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_SD1_DATA2__USDHC1_DATA2 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_SD1_DATA3__USDHC1_DATA3 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-
-	/* usdhc1 connect to SDCard slot, not use VSELECT and RESET */
-	/* VSELECT */
-	//MX6_PAD_GPIO1_IO05__USDHC1_VSELECT | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	/* CD */
-	MX6_PAD_UART1_RTS_B__GPIO1_IO19 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	/* RST_B */
-	//MX6_PAD_GPIO1_IO09__GPIO1_IO09 | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-/*
- * mx6ull_14x14_evk board default supports sd card. If want to use
- * EMMC, need to do board rework for sd2.
- * Introduce CONFIG_MX6ULL_EVK_EMMC_REWORK, if sd2 reworked to support
- * emmc, need to define this macro.
- */
-#if defined(CONFIG_SYS_BOOT_EMMC)
 static iomux_v3_cfg_t const usdhc2_emmc_pads[] = {
 	MX6_PAD_NAND_RE_B__USDHC2_CLK | MUX_PAD_CTRL(USDHC_PAD_CTRL),
 	MX6_PAD_NAND_WE_B__USDHC2_CMD | MUX_PAD_CTRL(USDHC_PAD_CTRL),
@@ -373,30 +349,6 @@ static iomux_v3_cfg_t const usdhc2_emmc_pads[] = {
 	 */
 	MX6_PAD_NAND_ALE__GPIO4_IO10 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
-#endif
-#if 0
-static iomux_v3_cfg_t const usdhc2_pads[] = {
-	MX6_PAD_NAND_RE_B__USDHC2_CLK | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_NAND_WE_B__USDHC2_CMD | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_NAND_DATA00__USDHC2_DATA0 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_NAND_DATA01__USDHC2_DATA1 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_NAND_DATA02__USDHC2_DATA2 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-	MX6_PAD_NAND_DATA03__USDHC2_DATA3 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
-};
-
-static iomux_v3_cfg_t const usdhc2_cd_pads[] = {
-	/*
-	 * The evk board uses DAT3 to detect CD card plugin,
-	 * in u-boot we mux the pin to GPIO when doing board_mmc_getcd.
-	 */
-	MX6_PAD_NAND_DATA03__GPIO4_IO05 | MUX_PAD_CTRL(USDHC_DAT3_CD_PAD_CTRL),
-};
-
-static iomux_v3_cfg_t const usdhc2_dat3_pads[] = {
-	MX6_PAD_NAND_DATA03__USDHC2_DATA3 |
-	MUX_PAD_CTRL(USDHC_DAT3_CD_PAD_CTRL),
-};
-#endif
 
 static void setup_iomux_uart(void)
 {
@@ -432,10 +384,7 @@ static int board_qspi_init(void)
 
 #ifdef CONFIG_FSL_ESDHC
 static struct fsl_esdhc_cfg usdhc_cfg[] = {
-	{USDHC1_BASE_ADDR, 0, 4},
-#if defined(CONFIG_SYS_BOOT_EMMC)
-	{USDHC2_BASE_ADDR, 0, 8},
-#endif
+	{USDHC2_BASE_ADDR, 0, 8}
 };
 
 #define USDHC1_CD_GPIO	IMX_GPIO_NR(1, 19)
@@ -509,66 +458,23 @@ void board_late_mmc_env_init(void)
 	sprintf(cmd, "mmc dev %d", dev_no);
 	run_command(cmd, 0);
 }
+
+/*
+ * According to the board_mmc_init() the following map is done:
+ * (Physical Port)   (U-Boot device node)
+ * USDHC1            not mapped
+ * USDHC2            mmc0
+ */
 int board_mmc_init(bd_t *bis)
 {
-#ifdef CONFIG_SPL_BUILD
-#if defined(CONFIG_SYS_BOOT_EMMC)
-	imx_iomux_v3_setup_multiple_pads(usdhc2_emmc_pads,
-					 ARRAY_SIZE(usdhc2_emmc_pads));
-#endif
-    /*
-	gpio_direction_output(USDHC2_PWR_GPIO, 0);
-	udelay(500);
-	gpio_direction_output(USDHC2_PWR_GPIO, 1);
-    */
-	usdhc_cfg[1].sdhc_clk = mxc_get_clock(MXC_ESDHC2_CLK);
-	return fsl_esdhc_initialize(bis, &usdhc_cfg[1]);
-#else
-	int i, ret;
+	imx_iomux_v3_setup_multiple_pads(usdhc2_emmc_pads, ARRAY_SIZE(usdhc2_emmc_pads));
+	usdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC2_CLK);
 
-	/*
-	 * According to the board_mmc_init() the following map is done:
-	 * (U-Boot device node)    (Physical Port)
-	 * mmc0                    USDHC1
-	 * mmc1                    USDHC2
-	 */
-	for (i = 0; i < CONFIG_SYS_FSL_USDHC_NUM; i++) {
-		switch (i) {
-		case 0:
-			imx_iomux_v3_setup_multiple_pads(
-				usdhc1_pads, ARRAY_SIZE(usdhc1_pads));
-			gpio_direction_input(USDHC1_CD_GPIO);
-			usdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC_CLK);
-
-            /* SDCard not use VSELECT
-			gpio_direction_output(USDHC1_PWR_GPIO, 0);
-			udelay(500);
-			gpio_direction_output(USDHC1_PWR_GPIO, 1);
-            */
-			break;
-		case 1:
-#if defined(CONFIG_SYS_BOOT_EMMC)
-			imx_iomux_v3_setup_multiple_pads(
-				usdhc2_emmc_pads, ARRAY_SIZE(usdhc2_emmc_pads));
-#endif
-            /*
-			gpio_direction_output(USDHC2_PWR_GPIO, 0);
-			udelay(500);
-			gpio_direction_output(USDHC2_PWR_GPIO, 1);
-            */
-			usdhc_cfg[1].sdhc_clk = mxc_get_clock(MXC_ESDHC2_CLK);
-			break;
-		default:
-			printf("Warning: you configured more USDHC controllers (%d) than supported by the board\n", i + 1);
-			return -EINVAL;
-			}
-
-			ret = fsl_esdhc_initialize(bis, &usdhc_cfg[i]);
-			if (ret) {
-				printf("Warning: failed to initialize mmc dev %d\n", i);
-			}
+	int ret = fsl_esdhc_initialize(bis, &usdhc_cfg[0]);
+	if (ret) {
+		printf("Warning: failed to initialize mmc dev %d\n", 0);
 	}
-#endif
+
 	return 0;
 }
 #endif
@@ -610,41 +516,6 @@ int board_ehci_hcd_init(int port)
 	setbits_le32(usbnc_usb_ctrl, UCTRL_PWR_POL);
 
 	return 0;
-}
-#endif
-
-#ifdef CONFIG_NAND_MXS
-static iomux_v3_cfg_t const nand_pads[] = {
-	MX6_PAD_NAND_DATA00__RAWNAND_DATA00 | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_DATA01__RAWNAND_DATA01 | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_DATA02__RAWNAND_DATA02 | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_DATA03__RAWNAND_DATA03 | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_DATA04__RAWNAND_DATA04 | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_DATA05__RAWNAND_DATA05 | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_DATA06__RAWNAND_DATA06 | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_DATA07__RAWNAND_DATA07 | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_CLE__RAWNAND_CLE | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_ALE__RAWNAND_ALE | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_CE0_B__RAWNAND_CE0_B | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_RE_B__RAWNAND_RE_B | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_WE_B__RAWNAND_WE_B | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_WP_B__RAWNAND_WP_B | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_READY_B__RAWNAND_READY_B | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-	MX6_PAD_NAND_DQS__RAWNAND_DQS | MUX_PAD_CTRL(GPMI_PAD_CTRL2),
-};
-
-static void setup_gpmi_nand(void)
-{
-	struct mxc_ccm_reg *mxc_ccm = (struct mxc_ccm_reg *)CCM_BASE_ADDR;
-
-	/* config gpmi nand iomux */
-	imx_iomux_v3_setup_multiple_pads(nand_pads, ARRAY_SIZE(nand_pads));
-
-	setup_gpmi_io_clk((3 << MXC_CCM_CSCDR1_BCH_PODF_OFFSET) |
-			  (3 << MXC_CCM_CSCDR1_GPMI_PODF_OFFSET));
-
-	/* enable apbh clock gating */
-	setbits_le32(&mxc_ccm->CCGR0, MXC_CCM_CCGR0_APBHDMA_MASK);
 }
 #endif
 
@@ -759,97 +630,6 @@ int board_phy_config(struct phy_device *phydev)
 }
 #endif
 
-#ifdef CONFIG_VIDEO_MXS
-static iomux_v3_cfg_t const lcd_pads[] = {
-	MX6_PAD_LCD_CLK__LCDIF_CLK | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_ENABLE__LCDIF_ENABLE | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_HSYNC__LCDIF_HSYNC | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_VSYNC__LCDIF_VSYNC | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA00__LCDIF_DATA00 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA01__LCDIF_DATA01 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA02__LCDIF_DATA02 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA03__LCDIF_DATA03 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA04__LCDIF_DATA04 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA05__LCDIF_DATA05 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA06__LCDIF_DATA06 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA07__LCDIF_DATA07 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA08__LCDIF_DATA08 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA09__LCDIF_DATA09 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA10__LCDIF_DATA10 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA11__LCDIF_DATA11 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA12__LCDIF_DATA12 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA13__LCDIF_DATA13 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA14__LCDIF_DATA14 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA15__LCDIF_DATA15 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA16__LCDIF_DATA16 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA17__LCDIF_DATA17 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA18__LCDIF_DATA18 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA19__LCDIF_DATA19 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA20__LCDIF_DATA20 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA21__LCDIF_DATA21 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA22__LCDIF_DATA22 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX6_PAD_LCD_DATA23__LCDIF_DATA23 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-
-	/* LCD_RST */
-	MX6_PAD_SNVS_TAMPER9__GPIO5_IO09 | MUX_PAD_CTRL(NO_PAD_CTRL),
-
-	/* Use GPIO for Brightness adjustment, duty cycle = period. */
-	MX6_PAD_GPIO1_IO08__GPIO1_IO08 | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-void do_enable_parallel_lcd(struct display_info_t const *dev)
-{
-	enable_lcdif_clock(dev->bus);
-
-	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));
-
-	/* Reset the LCD */
-	gpio_direction_output(IMX_GPIO_NR(5, 9) , 0);
-	udelay(500);
-	gpio_direction_output(IMX_GPIO_NR(5, 9) , 1);
-
-	/* Set Brightness to high */
-	gpio_direction_output(IMX_GPIO_NR(1, 8) , 1);
-}
-
-struct display_info_t const displays[] = {{
-	.bus = MX6UL_LCDIF1_BASE_ADDR,
-	.addr = 0,
-	.pixfmt = 24,
-	.detect = NULL,
-	.enable	= do_enable_parallel_lcd,
-	.mode	= {
-		.name			= "TFT43AB",
-		.xres           = 480,
-		.yres           = 272,
-		.pixclock       = 108695,
-		.left_margin    = 8,
-		.right_margin   = 4,
-		.upper_margin   = 2,
-		.lower_margin   = 4,
-		.hsync_len      = 41,
-		.vsync_len      = 10,
-		.sync           = 0,
-		.vmode          = FB_VMODE_NONINTERLACED
-} } };
-size_t display_count = ARRAY_SIZE(displays);
-#endif
-
-static iomux_v3_cfg_t const wifi_pwr_pads[] = {
-	MX6_PAD_JTAG_MOD__GPIO1_IO10 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	MX6_PAD_NAND_DQS__GPIO4_IO16 | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-static iomux_v3_cfg_t const lte_pwr_pads[] = {
-	MX6_PAD_SNVS_TAMPER5__GPIO5_IO05 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	MX6_PAD_SNVS_TAMPER8__GPIO5_IO08 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	MX6_PAD_NAND_CE1_B__GPIO4_IO14 | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-static iomux_v3_cfg_t const lcd_pwr_pads[] = {
-	MX6_PAD_LCD_RESET__GPIO3_IO04 | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
 int board_early_init_f(void)
 {
 	setup_iomux_uart();
@@ -861,30 +641,6 @@ int board_init(void)
 {
 	/* Address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
-
-	/* WiFi Power */
-	imx_iomux_v3_setup_multiple_pads(wifi_pwr_pads, ARRAY_SIZE(wifi_pwr_pads));
-	gpio_direction_output(IMX_GPIO_NR(1, 10) , 0);
-
-	/* WiFi Reset */
-	gpio_direction_output(IMX_GPIO_NR(4, 16) , 0);
-	udelay(3000);
-	gpio_direction_output(IMX_GPIO_NR(4, 16) , 1);
-
-	/* LCD Power */
-	imx_iomux_v3_setup_multiple_pads(lcd_pwr_pads, ARRAY_SIZE(lcd_pwr_pads));
-	gpio_direction_output(IMX_GPIO_NR(3, 4) , 1);
-
-	/* LTE module */
-	imx_iomux_v3_setup_multiple_pads(lte_pwr_pads, ARRAY_SIZE(lte_pwr_pads));
-	/* LTE wakeup */
-	gpio_direction_output(IMX_GPIO_NR(5, 8) , 1);
-	/* LTE power */
-	gpio_direction_output(IMX_GPIO_NR(5, 5) , 1);
-	/* LTE reset */
-	gpio_direction_output(IMX_GPIO_NR(4, 14) , 1);
-	udelay(150000);
-	gpio_direction_output(IMX_GPIO_NR(4, 14) , 0);
 
 #ifdef CONFIG_SYS_I2C_MXC
 	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
@@ -900,10 +656,6 @@ int board_init(void)
 
 #ifdef CONFIG_FSL_QSPI
 	board_qspi_init();
-#endif
-
-#ifdef CONFIG_NAND_MXS
-	setup_gpmi_nand();
 #endif
 
 	return 0;
@@ -961,99 +713,10 @@ int checkboard(void)
 	return 0;
 }
 
-#ifdef CONFIG_FSL_FASTBOOT
-void board_fastboot_setup(void)
-{
-	switch (get_boot_device()) {
-#if defined(CONFIG_FASTBOOT_STORAGE_MMC)
-	case SD1_BOOT:
-	case MMC1_BOOT:
-		if (!getenv("fastboot_dev"))
-			env_set("fastboot_dev", "mmc0");
-		if (!getenv("bootcmd"))
-			env_set("bootcmd", "boota mmc0");
-		break;
-	case SD2_BOOT:
-	case MMC2_BOOT:
-		if (!getenv("fastboot_dev"))
-			env_set("fastboot_dev", "mmc1");
-		if (!getenv("bootcmd"))
-			env_set("bootcmd", "boota mmc1");
-		break;
-#endif /*CONFIG_FASTBOOT_STORAGE_MMC*/
-#if defined(CONFIG_FASTBOOT_STORAGE_NAND)
-	case NAND_BOOT:
-		if (!getenv("fastboot_dev"))
-			env_set("fastboot_dev", "nand");
-		if (!getenv("fbparts"))
-			env_set("fbparts", ANDROID_FASTBOOT_NAND_PARTS);
-		if (!getenv("bootcmd"))
-			env_set("bootcmd",
-				"nand read ${loadaddr} ${boot_nand_offset} "
-				"${boot_nand_size};boota ${loadaddr}");
-		break;
-#endif /*CONFIG_FASTBOOT_STORAGE_NAND*/
-
-	default:
-		printf("unsupported boot devices\n");
-		break;
-	}
-}
-
-#ifdef CONFIG_ANDROID_RECOVERY
-int check_recovery_cmd_file(void)
-{
-	int recovery_mode = 0;
-
-	recovery_mode = recovery_check_and_clean_flag();
-
-	return recovery_mode;
-}
-
-void board_recovery_setup(void)
-{
-	int bootdev = get_boot_device();
-
-	switch (bootdev) {
-#if defined(CONFIG_FASTBOOT_STORAGE_MMC)
-	case SD1_BOOT:
-	case MMC1_BOOT:
-		if (!getenv("bootcmd_android_recovery"))
-			env_set("bootcmd_android_recovery", "boota mmc0 recovery");
-		break;
-	case SD2_BOOT:
-	case MMC2_BOOT:
-		if (!getenv("bootcmd_android_recovery"))
-			env_set("bootcmd_android_recovery", "boota mmc1 recovery");
-		break;
-#endif /*CONFIG_FASTBOOT_STORAGE_MMC*/
-#if defined(CONFIG_FASTBOOT_STORAGE_NAND)
-	case NAND_BOOT:
-		if (!getenv("bootcmd_android_recovery"))
-			env_set("bootcmd_android_recovery",
-				"nand read ${loadaddr} ${recovery_nand_offset} "
-				"${recovery_nand_size};boota ${loadaddr}");
-		break;
-#endif /*CONFIG_FASTBOOT_STORAGE_NAND*/
-
-	default:
-		printf("Unsupported bootup device for recovery: dev: %d\n",
-			bootdev);
-		return;
-	}
-
-	printf("setup env for recovery..\n");
-	env_set("bootcmd", "run bootcmd_android_recovery");
-}
-#endif /*CONFIG_ANDROID_RECOVERY*/
-
-#endif /*CONFIG_FSL_FASTBOOT*/
-
 #ifdef CONFIG_SPL_BUILD
 #include <libfdt.h>
 #include <spl.h>
 #include <asm/arch/mx6-ddr.h>
-
 
 static struct mx6ul_iomux_grp_regs mx6_grp_ioregs = {
 	.grp_addds = 0x00000030,
