@@ -1,3 +1,6 @@
+# This file is intended to allow flashing of the eMMC memory on the
+# SoM via USB Mass Storage Gadget, not for general usage.
+
 CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/myir/myd_y6ull/imximage.cfg,SYS_BOOT_EMMC,SYS_DDR_SIZE=512"
 CONFIG_ARM=y
 CONFIG_ARCH_MX6=y
@@ -26,10 +29,13 @@ CONFIG_CI_UDC=y
 CONFIG_OF_LIBFDT=y
 CONFIG_SUPPORT_EMMC_BOOT=y
 
-#
-# From https://www.denx.de/wiki/DULG/UBootEnvVariables
-# After reset, U-Boot will wait this number of seconds before it executes the contents of the bootcmd variable. During this time a countdown is printed, which can be interrupted by pressing any key.
-# Set this variable to 0 boot without delay. Be careful: depending on the contents of your bootcmd variable, this can prevent you from entering interactive commands again forever!
-# Set this variable to -1 to disable autoboot. Set this variable to -2 to boot without delay and not check for abort.
-#
-CONFIG_BOOTDELAY 5
+# Bootbomb
+CONFIG_MMC_VERBOSE=y
+CONFIG_USB_GADGET=y
+CONFIG_USB_GADGET_DOWNLOAD=y
+CONFIG_USB_FUNCTION_MASS_STORAGE=y
+CONFIG_CMD_USB_MASS_STORAGE=y
+
+# Expose eMMC via USB Gadget on boot
+CONFIG_USE_BOOTCOMMAND=y
+CONFIG_BOOTCOMMAND="ums 0 mmc 0"

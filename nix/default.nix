@@ -8,43 +8,72 @@ let
   inherit (pkgs) lib buildUBoot;
 
 in rec {
-  ubootBootbombMYDY6ULL = buildUBoot rec {
-    name = "u-boot-bootbomb-myd-y6ull";
+  ubootNgenicAlfred = buildUBoot rec {
+    name = "u-boot-ngenic-alfred";
     src = ../.;
 
-    defconfig = "myd_y6ull_14x14_emmc_bootbomb_defconfig";
-
-#   # Start the usb mass storage gadget on boot.
-#   extraConfig = ''
-#     CONFIG_USE_BOOTCOMMAND=y
-#     CONFIG_BOOTCOMMAND="ums 0 mmc 1"
-#   '';
+    defconfig = "ngenic_alfred_defconfig";
 
     filesToInstall = [ "u-boot.imx" ];
 
     postInstall = ''
-      mv $out/u-boot.imx $out/u-boot-bootbomb-myd-y6ull.imx
+      mv $out/u-boot.imx $out/u-boot-ngenic-alfred.imx
     '';
 
     extraMeta = with lib; {
-      maintainers = [ maintainers.olcai ];
+      maintainers = [ maintainers.mattias01 ];
     };
   };
 
-  ubootPicoIMX6UL = buildUBoot rec {
-    name = "u-boot-pico-imx6ul";
+  ubootNgenicAlfredBootbomb = buildUBoot rec {
+    name = "u-boot-ngenic-alfred-bootbomb";
     src = ../.;
 
-    defconfig = "pico-imx6ul_defconfig";
+    defconfig = "ngenic_alfred_bootbomb_defconfig";
 
     filesToInstall = [ "u-boot.imx" ];
 
     postInstall = ''
-      mv $out/u-boot.imx $out/u-boot-pico-imx6ul.imx
+      mv $out/u-boot.imx $out//u-boot-ngenic-alfred-bootbomb.imx
     '';
 
     extraMeta = with lib; {
-      maintainers = [ maintainers.olcai ];
+      maintainers = [ maintainers.mattias01 ];
     };
   };
+
+  ubootNgenicBohr = buildUBoot rec {
+    name = "u-boot-ngenic-bohr";
+    src = ../.;
+
+    defconfig = "ngenic_bohr_defconfig";
+
+    filesToInstall = [ "u-boot.imx" ];
+
+    postInstall = ''
+      mv $out/u-boot.imx $out/u-boot-ngenic-bohr.imx
+    '';
+
+    extraMeta = with lib; {
+      maintainers = [ maintainers.mattias01 ];
+    };
+  };
+
+  ubootNgenicBohrBootbomb = buildUBoot rec {
+    name = "u-boot-ngenic-bohr-bootbomb";
+    src = ../.;
+
+    defconfig = "ngenic_bohr_bootbomb_defconfig";
+
+    filesToInstall = [ "u-boot.imx" ];
+
+    postInstall = ''
+      mv $out/u-boot.imx $out//u-boot-ngenic-bohr-bootbomb.imx
+    '';
+
+    extraMeta = with lib; {
+      maintainers = [ maintainers.mattias01 ];
+    };
+  };
+
 }
