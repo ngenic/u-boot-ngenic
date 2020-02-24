@@ -32,7 +32,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"image=zImage\0" \
 	"console=ttymxc5\0" \
-	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
+	"fdt_file=set_this_in_preboot\0" \
 	"fdt_addr=0x83000000\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
 	"mmcbootpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
