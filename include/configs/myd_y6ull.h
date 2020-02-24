@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Ngenic AB
+ * Copyright (C) 2020 Ngenic AB
  * Copyright (C) 2016 Freescale Semiconductor, Inc.
  *
  * Configuration settings for the Freescale i.MX6UL 14x14 EVK board.
@@ -113,7 +113,7 @@
 		"fi; " \
 	"else " \
 		"echo WARN: mmc rescan failed; " \
-	"fi;" \
+	"fi;"
 #endif
 
 /* Miscellaneous configurable options */

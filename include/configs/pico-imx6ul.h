@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0+ */
 /*
- * Copyright (C) 2018 Ngenic AB
+ * Copyright (C) 2020 Ngenic AB
  * Copyright (C) 2015 Technexion Ltd.
  *
  * Configuration settings for the Technexion PICO-IMX6UL-EMMC board.
@@ -41,7 +41,7 @@
 	"findrootuuid=part uuid mmc ${mmcdev}:${mmcrootpart} uuid\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
 		"root=PARTUUID=${uuid} rootwait ro " \
-                "fbcon=scrollback:1024k consoleblank=0 caam\0" \
+			"fbcon=scrollback:1024k consoleblank=0 caam\0" \
 	"loadimage=load mmc ${mmcdev}:${mmcbootpart} ${loadaddr} ${image}\0" \
 	"loadfdt=load mmc ${mmcdev}:${mmcbootpart} ${fdt_addr} ${fdt_file}\0" \
 	"bootscr=boot.scr\0" \
@@ -73,7 +73,7 @@
 		"fi; " \
 	"else " \
 		"echo WARN: mmc rescan failed; " \
-	"fi;" \
+	"fi;"
 #endif
 
 /* Miscellaneous configurable options */
