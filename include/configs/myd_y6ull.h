@@ -92,28 +92,28 @@
 		"else " \
 			"echo WARN: Cannot load the DT; " \
 		"fi;\0" \
+		
+#define CONFIG_PREBOOT \
+	"echo Set the MMC device.; " \
+	"mmc dev ${mmcdev}; " \
+	"echo Set user partition on EMMC as bootable.; " \
+	"mmc partconf ${mmcdev} 1 7 0; " \
+	"if run loadbootscr; then " \
+		"echo Found boot.scr. Executing script...; " \
+		"source ${script_addr}; " \
+	"fi;"
 
 #ifndef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND \
-		"if mmc rescan; then " \
-			"if run loadimage; then " \
-				"run mmcboot; " \
-            "else " \
-				"echo ERROR: Cannot load kernel image.; " \
-			"fi; " \
+	"if mmc rescan; then " \
+		"if run loadimage; then " \
+			"run mmcboot; " \
 		"else " \
-			"echo WARN: mmc rescan failed; " \
-		"fi;" \
-
-#define CONFIG_PREBOOT \
-		"echo Set the MMC device.; " \
-		"mmc dev ${mmcdev}; " \
-		"echo Set user partition on EMMC as bootable.; " \
-		"mmc partconf ${mmcdev} 1 7 0; " \
-		"if run loadbootscr; then " \
-			"echo Found boot.scr. Executing script...; " \
-			"source ${script_addr}; " \
-		"fi;"
+			"echo ERROR: Cannot load kernel image.; " \
+		"fi; " \
+	"else " \
+		"echo WARN: mmc rescan failed; " \
+	"fi;" \
 #endif
 
 /* Miscellaneous configurable options */
