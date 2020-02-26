@@ -191,4 +191,7 @@
 
 #define CONFIG_IOMUX_LPSR
 
+#define CONFIG_PWM_IMX
+#define CONFIG_IMX6_PWM_PER_CLK 66000000
+
 #endif

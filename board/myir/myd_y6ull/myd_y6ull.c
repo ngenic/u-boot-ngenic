@@ -593,6 +593,58 @@ int board_phy_config(struct phy_device *phydev)
 }
 #endif
 
+/* Pads are take from the linux dts file */
+static iomux_v3_cfg_t const pwm_led_pads[] = {
+	MX6_PAD_GPIO1_IO04__PWM3_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* green */
+	MX6_PAD_GPIO1_IO09__PWM2_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* red */
+	MX6_PAD_GPIO1_IO08__PWM1_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* blue */
+};
+
+
+/* Will init to white (intention is to set brightness to 64/256 for all three rgb) */
+static int set_pwm_leds(void)
+{
+	int ret;
+
+	imx_iomux_v3_setup_multiple_pads(pwm_led_pads, ARRAY_SIZE(pwm_led_pads));
+	/* enable PWM 3, red LED */
+	ret = pwm_init(2, 0, 0);
+	if (ret)
+		return ret;
+	/* duty cycle 1250000ns, period: 5000000ns */
+	ret = pwm_config(2, 1250000, 5000000);
+	if (ret)
+		return ret;
+	ret = pwm_enable(2);
+	if (ret)
+		return ret;
+
+	/* enable PWM 2, green LED */
+	ret = pwm_init(1, 0, 0);
+	if (ret)
+		return ret;
+	/* duty cycle 1250000ns, period: 5000000ns */
+	ret = pwm_config(1, 1250000, 5000000);
+	if (ret)
+		return ret;
+	ret = pwm_enable(1);
+	if (ret)
+		return ret;
+
+	/* enable PWM 1, blue LED */
+	ret = pwm_init(0, 0, 0);
+	if (ret)
+		return ret;
+	/* duty cycle 1250000ns, period: 5000000ns */
+	ret = pwm_config(0, 1250000, 5000000);
+	if (ret)
+		return ret;
+	ret = pwm_enable(0);
+
+	return ret;
+}
+
+
 int board_early_init_f(void)
 {
 	setup_iomux_uart();
@@ -607,6 +659,10 @@ int board_init(void)
 
 #ifdef CONFIG_SYS_I2C_MXC
 	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
+#endif
+
+#ifdef CONFIG_PWM_IMX
+	set_pwm_leds();
 #endif
 
 #ifdef	CONFIG_FEC_MXC

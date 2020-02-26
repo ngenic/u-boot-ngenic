@@ -90,13 +90,6 @@ static iomux_v3_cfg_t const fec_pads[] = {
 	MX6_PAD_UART4_TX_DATA__GPIO1_IO28	| MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
-/* Pads are take from the linux dts file */
-static iomux_v3_cfg_t const pwm_led_pads[] = {
-	MX6_PAD_NAND_ALE__PWM3_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* green */
-	MX6_PAD_ENET1_TX_CLK__PWM7_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* red */
-	MX6_PAD_ENET1_RX_ER__PWM8_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* blue */
-};
-
 static void setup_iomux_fec(void)
 {
 	imx_iomux_v3_setup_multiple_pads(fec_pads, ARRAY_SIZE(fec_pads));
@@ -278,6 +271,13 @@ int board_ehci_hcd_init(int port)
 
 	return 0;
 }
+
+/* Pads are take from the linux dts file */
+static iomux_v3_cfg_t const pwm_led_pads[] = {
+	MX6_PAD_NAND_ALE__PWM3_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* green */
+	MX6_PAD_ENET1_TX_CLK__PWM7_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* red */
+	MX6_PAD_ENET1_RX_ER__PWM8_OUT | MUX_PAD_CTRL(NO_PAD_CTRL), /* blue */
+};
 
 /* Will init to white (intention is to set brightness to 64/256 for all three rgb) */
 static int set_pwm_leds(void)
