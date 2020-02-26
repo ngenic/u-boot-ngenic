@@ -223,17 +223,17 @@ void iox74lv_set(int index)
 
 #ifdef CONFIG_SYS_I2C_MXC
 #define PC MUX_PAD_CTRL(I2C_PAD_CTRL)
-/* I2C1 for PMIC and EEPROM */
+/* I2C1 for EEPROM */
 static struct i2c_pads_info i2c_pad_info1 = {
 	.scl = {
-		.i2c_mode =  MX6_PAD_UART4_TX_DATA__I2C1_SCL | PC,
-		.gpio_mode = MX6_PAD_UART4_TX_DATA__GPIO1_IO28 | PC,
-		.gp = IMX_GPIO_NR(1, 28),
+		.i2c_mode =  MX6_PAD_UART5_TX_DATA__I2C2_SCL | PC,
+		.gpio_mode = MX6_PAD_UART5_TX_DATA__GPIO1_IO30 | PC,
+		.gp = IMX_GPIO_NR(1, 30),
 	},
 	.sda = {
-		.i2c_mode = MX6_PAD_UART4_RX_DATA__I2C1_SDA | PC,
-		.gpio_mode = MX6_PAD_UART4_RX_DATA__GPIO1_IO29 | PC,
-		.gp = IMX_GPIO_NR(1, 29),
+		.i2c_mode = MX6_PAD_UART5_RX_DATA__I2C2_SDA | PC,
+		.gpio_mode = MX6_PAD_UART5_RX_DATA__GPIO1_IO31 | PC,
+		.gp = IMX_GPIO_NR(1, 31),
 	},
 };
 
@@ -241,43 +241,6 @@ static struct i2c_pads_info i2c_pad_info1 = {
 #define I2C_PMIC       0
 int power_init_board(void)
 {
-	if (is_mx6ull_9x9_evk()) {
-		struct pmic *pfuze;
-		int ret;
-		unsigned int reg, rev_id;
-
-		ret = power_pfuze3000_init(I2C_PMIC);
-		if (ret)
-			return ret;
-
-		pfuze = pmic_get("PFUZE3000");
-		ret = pmic_probe(pfuze);
-		if (ret)
-			return ret;
-
-		pmic_reg_read(pfuze, PFUZE3000_DEVICEID, &reg);
-		pmic_reg_read(pfuze, PFUZE3000_REVID, &rev_id);
-		printf("PMIC: PFUZE3000 DEV_ID=0x%x REV_ID=0x%x\n",
-		       reg, rev_id);
-
-		/* disable Low Power Mode during standby mode */
-		pmic_reg_read(pfuze, PFUZE3000_LDOGCTL, &reg);
-		reg |= 0x1;
-		pmic_reg_write(pfuze, PFUZE3000_LDOGCTL, reg);
-
-		/* SW1B step ramp up time from 2us to 4us/25mV */
-		reg = 0x40;
-		pmic_reg_write(pfuze, PFUZE3000_SW1BCONF, reg);
-
-		/* SW1B mode to APS/PFM */
-		reg = 0xc;
-		pmic_reg_write(pfuze, PFUZE3000_SW1BMODE, reg);
-
-		/* SW1B standby voltage set to 0.975V */
-		reg = 0xb;
-		pmic_reg_write(pfuze, PFUZE3000_SW1BSTBY, reg);
-	}
-
 	return 0;
 }
 
@@ -643,7 +606,7 @@ int board_init(void)
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
 
 #ifdef CONFIG_SYS_I2C_MXC
-	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
+	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
 #endif
 
 #ifdef	CONFIG_FEC_MXC
