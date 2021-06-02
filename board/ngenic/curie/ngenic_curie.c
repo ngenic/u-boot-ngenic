@@ -4,23 +4,19 @@
  * Author: Parthiban Nallathambi <parthiban@linumiz.com>
  */
 
-#include <init.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/crm_regs.h>
+#include <asm/arch/imx-regs.h>
 #include <asm/arch/mx6-pins.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/global_data.h>
-#include <asm/mach-imx/iomux-v3.h>
 #include <asm/mach-imx/mxc_i2c.h>
-#include <fsl_esdhc_imx.h>
-#include <linux/bitops.h>
+#include <dm/ofnode.h>
+#include <env.h>
+#include <i2c_eeprom.h>
+#include <init.h>
 #include <miiphy.h>
 #include <netdev.h>
-#include <usb.h>
-#include <usb/ehci-ci.h>
-#include <dm/ofnode.h>
-#include <i2c_eeprom.h>
-#include <env.h>
 
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -77,6 +73,20 @@ int board_init(void)
 #endif
 	return 0;
 }
+
+#ifdef CONFIG_BOARD_LATE_INIT
+int board_late_init(void)
+{
+	// Read boot pin configuration from SRC_SBMR2.
+	uint32_t BMOD = ((src_base->sbmr2 & SRC_SBMR2_BMOD_MASK) >> SRC_SBMR2_BMOD_SHIFT);
+	if (BMOD == SRC_SBMR2_BMOD_SERIAL) {
+		printf("Serial Downloader boot detected - enabling fastboot.\n");
+		env_set("bootcmd", "echo Entering fastboot; fastboot usb 0");
+	}
+
+	return 0;
+}
+#endif
 
 #ifdef CONFIG_SYS_I2C_MAC_OFFSET
 int mac_read_from_eeprom(void)
