@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (C) 2020 Linumiz
+ * Author: Parthiban Nallathambi <parthiban@linumiz.com>
+ */
+
+/dts-v1/;
+#include "imx6ull.dtsi"
+#include "imx6ull-myir-mys-6ulx.dtsi"
+
+/*
+ * As a general strategy, we inherit the upstream board
+ * and then override what we need. Less work that way.
+ */
+
+/ {
+	model = "Ngenic Curie";
+	compatible = "ngenic,curie", "fsl,imx6ull";
+
+	chosen {
+		mac,eeprom = &mac_eeprom;
+	};
+};
+
+&usdhc1 {
+	status = "disabled";
+};
+
+&usdhc2 {
+	status = "okay";
+	// curie has V1 SoM which has broken 8-bit
+	bus-width = <4>;
+};
+
+&iomuxc {
+	pinctrl_i2c2: i2c2grp {
+		fsl,pins = <
+			MX6UL_PAD_UART5_TX_DATA__I2C2_SCL 0x4001b8b0
+			MX6UL_PAD_UART5_RX_DATA__I2C2_SDA 0x4001b8b0
+		>;
+	};
+};
+
+&iomuxc_snvs {
+	pinctrl_ethphy1_reset: hoggrp-2 {
+		fsl,pins = <
+			MX6ULL_PAD_SNVS_TAMPER9__GPIO5_IO09     0x1b0b0 /* enet1 reset - module internal! */
+		>;
+	};
+};
+
+
+&i2c2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_i2c2>;
+	clock_frequency = <100000>;
+	status = "okay";
+
+	mac_eeprom: eeprom@50 {
+		compatible = "microchip,24aa02e48";
+		reg = <0x50>;
+		pagesize = <8>;
+	};
+};
+
+&fec1 {
+	phy-reset-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;
+	phy-reset-duration = <26>;
+};

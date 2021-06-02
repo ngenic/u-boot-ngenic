@@ -1,0 +1,12 @@
+if TARGET_NGENIC_CURIE
+
+config SYS_BOARD
+	default "curie"
+
+config SYS_VENDOR
+	default "ngenic"
+
+config SYS_CONFIG_NAME
+	default "ngenic_curie"
+
+endif

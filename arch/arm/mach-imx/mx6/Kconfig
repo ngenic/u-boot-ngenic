@@ -688,6 +688,18 @@ config TARGET_BRPPT2
           Support
           B&R BRPPT2 platform
           based on Freescale's iMX6 SoC
+
+config TARGET_NGENIC_CURIE
+	bool "Ngenic Curie"
+	depends on MX6ULL
+	select DM
+	select DM_ETH
+	select DM_GPIO
+	select DM_I2C
+	select DM_MMC
+	select DM_SERIAL
+	select DM_THERMAL
+
 endchoice
 
 config SYS_SOC

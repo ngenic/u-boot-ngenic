@@ -1,0 +1,7 @@
+NGENIC_CURIE BOARD
+M:	Kosma Moczek <kosma.moczek@ngenic.biz>
+S:	Maintained
+F:	arch/arm/dts/ngenic-curie.dts
+F:	board/ngenic/curie/
+F:	configs/ngenic_curie_defconfig
+F:	include/configs/ngenic_curie.h
