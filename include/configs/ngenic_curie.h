@@ -47,6 +47,11 @@
 	"pxefile_addr_r=0x87100000\0" \
 	"ramdisk_addr_r=0x82100000\0" \
 	"scriptaddr=0x87000000\0" \
+	"partitions=" \
+		"name=root0,type=linux,size=1GB;" \
+		"name=root1,type=linux,size=1GB;" \
+		"name=data,type=linux,size=0" \
+	"\0" \
 	BOOTENV
 
 #define BOOT_TARGET_DEVICES(func) \
