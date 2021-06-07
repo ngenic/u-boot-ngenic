@@ -257,7 +257,11 @@ static void fb_mmc_boot_ops(struct blk_desc *dev_desc, void *buffer,
 
 		debug("Start Flashing Image to EMMC_BOOT%d...\n", hwpart);
 
-		blks = fb_mmc_blk_write(dev_desc, 0, blkcnt, buffer);
+		// Quick & Dirty Ngenic modification: i.MX6 requires u-boot at an offset.
+#ifndef CONFIG_SYS_UBOOT_OFFSET
+#define CONFIG_SYS_UBOOT_OFFSET 0
+#endif
+		blks = fb_mmc_blk_write(dev_desc, CONFIG_SYS_UBOOT_OFFSET, blkcnt, buffer);
 
 		if (blks != blkcnt) {
 			pr_err("Failed to write EMMC_BOOT%d\n", hwpart);

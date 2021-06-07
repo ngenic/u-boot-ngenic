@@ -9,4 +9,8 @@ config SYS_VENDOR
 config SYS_CONFIG_NAME
 	default "ngenic_curie"
 
+config SYS_UBOOT_OFFSET
+	hex "u-boot.imx offset on the physical device"
+	default 400
+
 endif
