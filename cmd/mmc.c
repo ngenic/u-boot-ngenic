@@ -789,6 +789,12 @@ static int mmc_partconf_print(struct mmc *mmc)
 		"BOOT_PARTITION_ENABLE: 0x%x\n"
 		"PARTITION_ACCESS: 0x%x\n", ack, part, access);
 
+	// Ngenic Quick Hack: Save results to variables.
+	// We need them for things - and U-Boot has no output capture.
+	env_set_ulong("mmc_boot_ack", ack);
+	env_set_ulong("mmc_boot_partition_enable", part);
+	env_set_ulong("mmc_partition_access", access);
+
 	return CMD_RET_SUCCESS;
 }
 
