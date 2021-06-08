@@ -80,8 +80,8 @@ int board_late_init(void)
 	// Read boot pin configuration from SRC_SBMR2.
 	uint32_t BMOD = ((src_base->sbmr2 & SRC_SBMR2_BMOD_MASK) >> SRC_SBMR2_BMOD_SHIFT);
 	if (BMOD == SRC_SBMR2_BMOD_SERIAL) {
-		printf("Serial Downloader boot detected - enabling fastboot.\n");
-		env_set("bootcmd", "echo Entering fastboot; fastboot usb 0");
+		printf("Serial Downloader boot detected - enabling recovery.\n");
+		env_set("bootcmd", "run bootcmd_recovery");
 	}
 
 	return 0;

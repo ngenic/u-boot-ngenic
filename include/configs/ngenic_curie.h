@@ -38,6 +38,22 @@
 /* MAC address EEPROM */
 #define CONFIG_SYS_I2C_MAC_OFFSET 0xFA
 
+#define BOOTENV \
+	"bootcmd_normal=" \
+	"mmc partconf 1;" \
+	"sqfsload mmc 1:${mmc_boot_partition_enable} $kernel_addr_r /boot/zImage; " \
+	"sqfsload mmc 1:${mmc_boot_partition_enable} $fdt_addr_r /boot/ngenic-curie.dtb; " \
+	"setenv bootargs root=PARTLABEL=root${mmc_boot_partition_enable}; " \
+	"bootz $kernel_addr_r - $fdt_addr_r; " \
+	"\0" \
+	"bootcmd_recovery=" \
+	"echo Entering Fastboot.; " \
+	"fastboot usb 0; " \
+	"\0" \
+	"bootcmd=" \
+	"run bootcmd_normal; " \
+	"\0"
+
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"console=ttymxc0,115200n8\0" \
 	"fdt_addr_r=0x82000000\0" \
@@ -53,10 +69,5 @@
 		"name=data,type=linux,size=0" \
 	"\0" \
 	BOOTENV
-
-#define BOOT_TARGET_DEVICES(func) \
-	func(MMC, mmc, 1)
-
-#include <config_distro_bootcmd.h>
 
 #endif /* __NGENIC_CURIE_H */
