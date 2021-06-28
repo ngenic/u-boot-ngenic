@@ -1034,6 +1034,8 @@ dtb-$(CONFIG_TARGET_PRESIDIO_ASIC) += ca-presidio-engboard.dtb
 
 dtb-$(CONFIG_TARGET_NGENIC_CURIE) += ngenic-curie.dtb
 
+dtb-$(CONFIG_TARGET_NGENIC_DIRAC) += ngenic-dirac.dtb
+
 targets += $(dtb-y)
 
 # Add any required device tree compiler flags here

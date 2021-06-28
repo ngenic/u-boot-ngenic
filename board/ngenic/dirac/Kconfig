@@ -1,0 +1,16 @@
+if TARGET_NGENIC_DIRAC
+
+config SYS_BOARD
+	default "dirac"
+
+config SYS_VENDOR
+	default "ngenic"
+
+config SYS_CONFIG_NAME
+	default "ngenic_dirac"
+
+config SYS_UBOOT_OFFSET
+	hex "u-boot.imx offset on the physical device"
+	default 400
+
+endif

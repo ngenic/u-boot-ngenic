@@ -1,0 +1,7 @@
+NGENIC_DIRAC BOARD
+M:	Kosma Moczek <kosma.moczek@ngenic.biz>
+S:	Maintained
+F:	arch/arm/dts/ngenic-dirac.dts
+F:	board/ngenic/dirac/
+F:	configs/ngenic_dirac_defconfig
+F:	include/configs/ngenic_dirac.h

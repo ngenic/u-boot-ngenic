@@ -700,6 +700,17 @@ config TARGET_NGENIC_CURIE
 	select DM_SERIAL
 	select DM_THERMAL
 
+config TARGET_NGENIC_DIRAC
+	bool "Ngenic Dirac"
+	depends on MX6ULL
+	select DM
+	select DM_ETH
+	select DM_GPIO
+	select DM_I2C
+	select DM_MMC
+	select DM_SERIAL
+	select DM_THERMAL
+
 endchoice
 
 config SYS_SOC
