@@ -250,9 +250,6 @@ int power_init_board(void)
 
 int board_usb_phy_mode(int port)
 {
-	if (port == 1)
-		return USB_INIT_HOST;
-	else
 		return USB_INIT_DEVICE;
 }
 
