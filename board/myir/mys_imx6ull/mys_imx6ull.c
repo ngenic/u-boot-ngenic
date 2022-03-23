@@ -559,10 +559,11 @@ static void setup_usb(void)
 
 int board_usb_phy_mode(int port)
 {
-	if (port == 1)
-		return USB_INIT_HOST;
-	else
-		return usb_phy_mode(port);
+	return USB_INIT_DEVICE;
+	// if (port == 1)
+	// 	return USB_INIT_HOST;
+	// else
+	// 	return usb_phy_mode(port);
 }
 
 int board_ehci_hcd_init(int port)
