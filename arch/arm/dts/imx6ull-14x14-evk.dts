@@ -487,8 +487,10 @@
 };
 
 &usbotg2 {
-	dr_mode = "peripheral";
-	disable-over-current;
+	dr_mode = "otg";
+	srp-disable;
+	hnp-disable;
+	adp-disable;
 	status = "okay";
 };
 
