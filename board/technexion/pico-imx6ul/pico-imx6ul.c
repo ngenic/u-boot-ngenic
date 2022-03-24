@@ -250,7 +250,7 @@ int power_init_board(void)
 
 int board_usb_phy_mode(int port)
 {
-		return USB_INIT_DEVICE;
+		return USB_INIT_HOST;
 }
 
 int board_ehci_hcd_init(int port)
