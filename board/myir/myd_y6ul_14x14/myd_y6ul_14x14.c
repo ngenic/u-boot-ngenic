@@ -581,7 +581,7 @@ static void setup_usb(void)
 int board_usb_phy_mode(int port)
 {
 	if (port == 1)
-		return USB_INIT_HOST;
+		return USB_INIT_DEVICE;
 	else
 		return usb_phy_mode(port);
 }
