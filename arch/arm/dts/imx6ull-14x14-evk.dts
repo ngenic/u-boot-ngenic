@@ -486,9 +486,27 @@
 	status = "okay";
 };
 
+pinctrl_usb_otg2: usbotg2grp {
+	fsl,pins = <MX6UL_PAD_GPIO1_IO02__GPIO1_IO02>;
+};
+
+reg_usb_otg2_vbus: regulator@2 {
+	compatible = "regulator-fixed";
+	reg = <2>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_usb_otg2>;
+	regulator-name = "usb_otg2_vbus";
+	regulator-min-microvolt = <5000000>;
+	regulator-max-microvolt = <5000000>;
+	gpio = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+	enable-active-high;
+};
+
 &usbotg2 {
-	dr_mode = "peripheral";
+	vbus-supply = <&reg_usb_otg2_vbus>;
+	dr_mode = "host";
 	disable-over-current;
+	tpl-support;
 	status = "okay";
 };
 
