@@ -487,7 +487,7 @@
 };
 
 &usbotg2 {
-	dr_mode = "host";
+	dr_mode = "peripheral";
 	disable-over-current;
 	status = "okay";
 };
