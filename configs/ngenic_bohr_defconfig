@@ -37,4 +37,4 @@ CONFIG_CMD_USB_MASS_STORAGE=y
 
 # Expose eMMC via USB Gadget on boot
 CONFIG_USE_BOOTCOMMAND=y
-CONFIG_BOOTCOMMAND="sleep 10; gpio set 5; sleep 10; gpio set 5; sleep 10; gpio set 5; sleep 10; gpio set 5; sleep 100;"
+CONFIG_BOOTCOMMAND="echo sleep; sleep 10; echo sleep; gpio set 5; echo sleep; sleep 10; gpio set 5; echo sleep; sleep 10; gpio set 5; echo sleep; sleep 10; gpio set 5; ums 1 mmc 0; echo long sleep; sleep 100;"
