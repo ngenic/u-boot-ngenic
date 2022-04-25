@@ -483,7 +483,7 @@
 	srp-disable;
 	hnp-disable;
 	adp-disable;
-	status = "okay";
+	status = "disable";
 };
 
 &usbotg2 {
